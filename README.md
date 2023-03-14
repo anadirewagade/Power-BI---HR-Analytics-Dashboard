@@ -1,3 +1,4 @@
+MANY MORE TO LEARN ABOUT POWER BI ,STILL LEARNIGN AND EXPLORING POWER BI
 IMPACT - Got to know the attriton rate.
 Learn to  present the data. 
 Learn How to use DAX. 
