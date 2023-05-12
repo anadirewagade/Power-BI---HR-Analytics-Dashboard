@@ -1,0 +1,133 @@
+Power Bi Project 
+
+End to End Project - Sales report
+Steps – 
+I divide the project into 4 parts 
+1.	Gathering the Data / Data Collection
+2.	Data Transformation 
+3.	Power Bi Reports / UI
+4.	Dashboard Publishing- Create workspace
+                                          Publish
+                                          Dashboards 
+                                           Gateway
+                                           Scheduled Refresh 
+                                           RLS Row level security
+1.Business Requirement document
+2.Functional Requirement document
+ITS IMPORTANT TO ASK FOR THIS DOCUMENTS TO THE CLIENT.
+In this documents , client give us the information , Data set , Task to be performed or Sometimes client ask us to dig the Data Ourself.
+
+1.Gathering Data /Data Collection
+Loading the Data from different data sources is called collection fot he data
+-	I collected data in the form of CSV Excel format and then I got load that data into power BI
+-	This data might be given by the client or sometimes not , we ourselves have to find and extract the data accordingly.
+
+DATA MODELING – it is the relationship between the tables or Mapping the Table. the process of analyzing and defining all the different data your business collects and produces, as well as the relationships between those bits of data.
+-The most important objective of data modeling is to create the foundation for a database that can rapidly load, retrieve, and analyze large data volumes. An effective data modeling concept requires mapping business data, relationships between data, and how the data is used.
+
+2.Data Transformation 
+In this data cleaning is done in the POWER QUERY EDITOR
+-	I cleaned the duplicate values in present in the Product id Table 
+-	Changed header of the table  - in Geography table – use first row as a header
+-	Changed the datatype in SalesrepID similar to other colums.- using replace values
+-	Replace value in SubCategory  similar to Category table
+-	Removed one colum from sales table as it was only the file name
+-	Split two colum in which Country and town was combined. In sakes table
+-	Based on the combination in the geography table , I added an Index named as Geokey which shows the relation of country and town
+-	Connected all the table using Data modeling , in data model we can see this linked tables  
+-	Created New Table means Calender , Using DATEMASTER DAX , it is a best practice to do if u have date table in your data then create this DateMaster Table.
+-	DAX used – Calendar (FIRSTDATE(Sales[Date]), LASTDATE(sale[Date]) 
+-	Year – Year(DateMaster[Date]) – Here Date master[Date] is a new tables frist coloum we have created 
+-	Month - Month(DateMaster[Date])
+-	Month name- Format(DateMaster[Date],” MMMM”)
+-	Qrt- Qrt(DateMaster[Date])
+-	Week number-Weeknum(DateMaster[Date])
+-	Week days - WEEKDAY(DateMaster[Date])
+-	Week day name = Format (Date master[Date],”DDDD”)
+ DAX Calculations. 
+1. Calculate the Total Revenue in Sales Table.
+Total Revenue = Product Retail Price * Unit
+Here Unit is present in Sales table and Product retail price is present in the Product table, 
+When we have to multiply the different coloum from different table then we use DAX function RELATED .It is basic relationship function
+Syntax – Total revenue = Sale[unit] * RELATED(ProductDetails[retail price]) 
+
+2. Calculate Total cost in Sales Table
+Total Cost = Products Standard cost * Unit
+Syntax- Total Cost = Sale[unit] * RELATED(Product[Standard cost]) 
+
+3. Calculate GROSS PROFIT 
+Gross profit = Total Revenue – Total cost
+Syntax- Gross profit = Sales[Total revenue] – Sale[Total cost] 
+
+4.Added new colum – DateMaster 
+5. Quarter on Quarter Growth = Total rev – prev rQrt / pre qrt ….. Here to cal culate prev revue Dax used was Prev. Qrt = CALCULATE([Total Revenue],PREVIOUSQUARTER('Date Master'[Date]) 
+
+6.Month on Month Change in % = Total profit – Prev mothn profit / pre month profit , here prev month profit = Pre month profit = CALCULATE([Total profit],PREVIOUSMONTH('Date Master'[Date]) 
+
+3.Power BI Report/UI
+In this we will now work in the report view
+REALTIME PROBLEMS -
+1.While creating dashboard the month order was not in the standard format. 
+So I created a new coloum – Month order as it will give jan as 1and so no Dec as 12, and then I sort the month name as month order then it got the month displayed in standard format
+2. While making pie chart , The title I gave to the pie chart was Categoery wise Total revenue, I took Subcategory table on x axis and Total revenue on Y axis
+3. I use multirow card – to show which are the top 5 sales persons based on gross profit they are generating . Use Salerep name and in filter I use filter by top n where n = 5 , by gross profit. 
+4. Breakdown Analysis of Product – Here I was unable to make the this because there was no data modeling or linkage between Year and product name done. I was unable to do breakdown analysis. Then I got realized that there is not linkage between Data master table with any of the other table . By using waterfall chart – in category I took year , in breakdown in took product name and in Values I took total revenue. The chart was not in proper order then I sort it by year and made in ascending.
+5. Created a bar graph of Total revenue by Products
+6. Quarter on Quarter growth – Means Revenue of Jan – Revenue of feb will give QoQ  
+STYNTAX = QoQ =Total rev – prev revnue / prev revenue ----
+For this we will make new table in which we will take year,quarter, total rev. Then I made new coloum of pre qrt usin gdax Prev. Qrt = CALCULATE([Total Rev],PREVIOUSQUARTER('Date Master'[Date]) , will make this apper to be in %
+
+7.Month on Month Change in % = Total profit – Prev mothn profit / pre month profit , here prev month profit = Pre month profit = CALCULATE([Total profit],PREVIOUSMONTH('Date Master'[Date]) 
+
+
+4.Dashboard and Publishing  
+RLS – 1.Static
+           2. Dynamic
+Static RLS -
+          Now We have gross profit based on 3 country , now I want to restrict that means I want certain users can see certain country – 
+Means I want the people of Germany should acess only the gross profit of Germany likewise Denmark and Cezech
+Go to modelling – Manage roles – Create roles – 
+1.	Germany Role – Select Geography from Table the add filter and Add DAX as Country =”Germany” Same for Denmark and Cezch rpublic 
+2.	Now to see where our Managed roles are working or nit , Go into the view option just next to managed role and select the view we want.
+
+Dynamic RLS –
+       If a person loged in w.r.t his user name , then the acess should be according to his user name.
+For ex – As we done in static rls ,we keep on adding those 3 cities , what if we have more that 10 cites we cant keep adding and adding so here dynamic RLS is used.
+So , for this I will create a excel file in which data of username/userid based on location_acess will be there , I can collect this form anywhere like excel spreadsheet, as every organization maintains the users information
+1.	I will add that file to Power bi naming as access data.
+2.	Then I will connect this access data table to geography table as both tables contains the same country name in Model view
+3.	Then I will wirte a measure – Who is the measure = UserPRINCIPAL NAME (it’s a DAX for who the user has logged in)
+4.	Then I will drag this measure into new card  -which will show my system id(my system information)
+5.	Then I will go to modeling and create mode as Acess role -Tables-acess data – filter user then DAX user = userprincipalname-save
+
+CREATING THE WORKSPACE – 
+What is Workspace – To share and collaborate the work with our team we need work space .
+We need Bi servies for this in that choose the option Create workspace
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+Power Bi Terms
+Card – It allows or it display the text or Data
+Sclicers – Tool that filters and segment the data, it allows us to filter data by specific dimensions
+Pie chart -use to show category data set in form of pie.
+Donut chart – shows the proportion of categorical data.
+Multirow card – use to display multiple data in the group format
+Waterfall chart – shows how the net income have affect of series of positive and negative changes
+
+RLS- Row Level Security –use to restrict the data for the given user
