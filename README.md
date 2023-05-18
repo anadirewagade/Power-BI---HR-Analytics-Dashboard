@@ -4,7 +4,8 @@ research on sales and Revenue
 of Organization.
 
 
-LEARNING FROM THE PROJECTS
+LEARNINGS FROM THE PROJECT----
+
 Worked to
 understand business reporting needs
 and
