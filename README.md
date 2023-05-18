@@ -2,6 +2,9 @@ Impact
 - Descriptive
 research on sales and Revenue
 of Organization.
+
+
+LEARNING FROM THE PROJECTS
 Worked to
 understand business reporting needs
 and
